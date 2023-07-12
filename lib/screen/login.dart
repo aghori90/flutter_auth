@@ -34,7 +34,7 @@ class _LoginState extends State<Login> {
                 Icon(Icons.lock),
                 Text(
                   'Login',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
                 ),
                 TextField(
                   keyboardType: TextInputType.emailAddress,
@@ -76,16 +76,17 @@ class _LoginState extends State<Login> {
                           style: TextStyle(color: Colors.black)),
                       WidgetSpan(
                           child: SizedBox(
-                            width: 5,
-                          )),
+                        width: 5,
+                      )),
                       TextSpan(
                           text: 'Register here',
                           style: TextStyle(color: Colors.blueAccent),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
                               // routing internal with link
-                              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                                  builder: (context) => Register()));
+                              Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (context) => Register()));
                             }),
                     ],
                   ),

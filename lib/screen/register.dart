@@ -31,15 +31,21 @@ class _RegisterState extends State<Register> {
                 const SizedBox(
                   height: 120,
                 ),
+                Icon(Icons.app_registration_sharp),
                 Text(
                   'Register',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
                 ),
+                const SizedBox(
+                  height: 20,
+                ),
+
+                // field 1 : name
                 TextField(
-                  keyboardType: TextInputType.emailAddress,
+                  keyboardType: TextInputType.text,
                   decoration: InputDecoration(
-                    hintText: 'Enter Username',
-                    labelText: 'Username',
+                    hintText: 'Enter Name',
+                    labelText: 'Name',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -48,12 +54,60 @@ class _RegisterState extends State<Register> {
                 const SizedBox(
                   height: 20,
                 ),
+
+                // field 2 : email
+                TextField(
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    hintText: 'Enter Email',
+                    labelText: 'Email',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+
+                // field 3 : contact
+                TextField(
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    hintText: 'Enter Mobile',
+                    labelText: 'Mobile',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+
+                // field 5 : password
                 TextField(
                   keyboardType: TextInputType.emailAddress,
                   obscureText: true,
                   decoration: InputDecoration(
                     hintText: 'Enter Password',
                     labelText: 'Password',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+
+                // field 6 : Confirm password
+                TextField(
+                  keyboardType: TextInputType.emailAddress,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    hintText: 'Enter Confirm Password',
+                    labelText: 'Confirm Password',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -83,7 +137,7 @@ class _RegisterState extends State<Register> {
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
                               // navigate to login screen
-                              Navigator.of(context).push(MaterialPageRoute(
+                              Navigator.of(context).pushReplacement(MaterialPageRoute(
                                   builder: (context) => Login()));
                             }),
                     ],

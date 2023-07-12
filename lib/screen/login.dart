@@ -76,15 +76,15 @@ class _LoginState extends State<Login> {
                           style: TextStyle(color: Colors.black)),
                       WidgetSpan(
                           child: SizedBox(
-                        width: 5,
-                      )),
+                            width: 5,
+                          )),
                       TextSpan(
                           text: 'Register here',
                           style: TextStyle(color: Colors.blueAccent),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
                               // routing internal with link
-                              Navigator.of(context).push(MaterialPageRoute(
+                              Navigator.of(context).pushReplacement(MaterialPageRoute(
                                   builder: (context) => Register()));
                             }),
                     ],

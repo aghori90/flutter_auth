@@ -1,6 +1,8 @@
+import 'package:abc/bloc/login_bloc.dart';
 import 'package:abc/screen/register.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -10,11 +12,15 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  // global key for form value
+  // assign it to the form 1
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  // var provider;  // created for object
   @override
   Widget build(BuildContext context) {
-    // global key for form value
-    // assign it to the form 1
-    GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+    // calling the bloc (as object)
+    final bloc = Provider.of<LoginBloc>(context, listen: false);
     return Scaffold(
       backgroundColor: Colors.grey[200],
       body: Form(
@@ -36,29 +42,40 @@ class _LoginState extends State<Login> {
                   'Login',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
                 ),
-                TextField(
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    hintText: 'Enter Username',
-                    labelText: 'Username',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
+                StreamBuilder(
+                  stream: bloc.loginEmail,
+                  builder:(context, AsyncSnapshot<String> snapshot) => // used insted of child under streamBuilder
+                  TextField(
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      hintText: 'Enter Email',
+                      labelText: 'Email',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
+                    onChanged: (value) => bloc.changeLoginEmail, // sending the value to setters(login_block.dart)
                   ),
                 ),
                 const SizedBox(
                   height: 20,
                 ),
-                TextField(
-                  keyboardType: TextInputType.emailAddress,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    hintText: 'Enter Password',
-                    labelText: 'Password',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
+                StreamBuilder<String>(
+                  stream: bloc.loginPassword,
+                  builder: (context, AsyncSnapshot<String> snapshot) {
+                    return TextField(
+                      keyboardType: TextInputType.emailAddress,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        hintText: 'Enter Password',
+                        labelText: 'Password',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      onChanged: (value) =>bloc.changeLoginPassword,
+                    );
+                  }
                 ),
                 const SizedBox(
                   height: 20,

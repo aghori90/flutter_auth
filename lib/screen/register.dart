@@ -1,6 +1,8 @@
+import 'package:abc/bloc/register_bloc.dart';
 import 'package:abc/screen/login.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -10,11 +12,17 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  // global key for form value
+  // assign it to the form 1
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  // set state for confirm password visible
+  bool isVisible = true;
+
   @override
   Widget build(BuildContext context) {
-    // global key for form value
-    // assign it to the form 1
-    GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+    final bloc =
+        Provider.of<RegisterBloc>(context, listen: false); // bloc provider
     return Scaffold(
       backgroundColor: Colors.grey[200],
       body: Form(
@@ -41,78 +49,114 @@ class _RegisterState extends State<Register> {
                 ),
 
                 // field 1 : name
-                TextField(
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    hintText: 'Enter Name',
-                    labelText: 'Name',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                ),
+                StreamBuilder<String>(
+                    stream: bloc.registerName,
+                    builder: (context, AsyncSnapshot<String> snapshot) {
+                      return TextField(
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                          hintText: 'Enter Name',
+                          labelText: 'Name',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        onChanged: (value) => bloc.changeRegisterName,
+                      );
+                    }),
                 const SizedBox(
                   height: 20,
                 ),
 
                 // field 2 : email
-                TextField(
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    hintText: 'Enter Email',
-                    labelText: 'Email',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                ),
+                StreamBuilder<String>(
+                    stream: bloc.registerEmail,
+                    builder: (context, AsyncSnapshot<String> snapshot) {
+                      return TextField(
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          hintText: 'Enter Email',
+                          labelText: 'Email',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        onChanged: (value) => bloc.changeRegisterEmail,
+                      );
+                    }),
                 const SizedBox(
                   height: 20,
                 ),
 
                 // field 3 : contact
-                TextField(
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    hintText: 'Enter Mobile',
-                    labelText: 'Mobile',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                ),
+                StreamBuilder<String>(
+                    stream: bloc.registerMobile,
+                    builder: (context, AsyncSnapshot<String> snapshot) {
+                      return TextField(
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          hintText: 'Enter Mobile',
+                          labelText: 'Mobile',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        onChanged: (value) => bloc.changeRegisterMobile,
+                      );
+                    }),
                 const SizedBox(
                   height: 20,
                 ),
 
                 // field 5 : password
-                TextField(
-                  keyboardType: TextInputType.emailAddress,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    hintText: 'Enter Password',
-                    labelText: 'Password',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                ),
+                StreamBuilder<String>(
+                    stream: bloc.registerPassword,
+                    builder: (context, AsyncSnapshot<String> snapshot) {
+                      return TextField(
+                        keyboardType: TextInputType.emailAddress,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          hintText: 'Enter Password',
+                          labelText: 'Password',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        onChanged: bloc.changeRegisterPassword,
+                      );
+                    }),
                 const SizedBox(
                   height: 20,
                 ),
 
                 // field 6 : Confirm password
-                TextField(
-                  keyboardType: TextInputType.emailAddress,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    hintText: 'Enter Confirm Password',
-                    labelText: 'Confirm Password',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                ),
+                StreamBuilder<String>(
+                    stream: bloc.registerCnfPassword,
+                    builder: (context, AsyncSnapshot<String> snapshot) {
+                      return TextField(
+                        keyboardType: TextInputType.emailAddress,
+                        obscureText: isVisible ? true : false,
+                        //condition for eye button
+                        decoration: InputDecoration(
+                          hintText: 'Enter Confirm Password',
+                          labelText: 'Confirm Password',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          suffixIcon: IconButton(
+                            icon: isVisible
+                                ? Icon(Icons.visibility_off)
+                                : Icon(Icons.visibility),
+                            onPressed: () {
+                              setState(() {
+                                isVisible = !isVisible;
+                              });
+                            },
+                          ),
+                        ),
+                        onChanged: (value) => bloc.changeRegisterCnfPassword,
+                      );
+                    }),
                 const SizedBox(
                   height: 20,
                 ),
@@ -137,8 +181,9 @@ class _RegisterState extends State<Register> {
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
                               // navigate to login screen
-                              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                                  builder: (context) => Login()));
+                              Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (context) => Login()));
                             }),
                     ],
                   ),

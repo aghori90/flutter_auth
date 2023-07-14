@@ -49,14 +49,15 @@ class _RegisterState extends State<Register> {
                 ),
 
                 // field 1 : name
-                StreamBuilder<String>(
+                StreamBuilder<Object>(
                     stream: bloc.registerName,
-                    builder: (context, AsyncSnapshot<String> snapshot) {
+                    builder: (context, snapshot) {
                       return TextField(
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
                           hintText: 'Enter Name',
                           labelText: 'Name',
+                          errorText: snapshot.error?.toString(),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -69,14 +70,15 @@ class _RegisterState extends State<Register> {
                 ),
 
                 // field 2 : email
-                StreamBuilder<String>(
+                StreamBuilder<Object>(
                     stream: bloc.registerEmail,
-                    builder: (context, AsyncSnapshot<String> snapshot) {
+                    builder: (context, snapshot) {
                       return TextField(
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                           hintText: 'Enter Email',
                           labelText: 'Email',
+                          errorText: snapshot.error?.toString(),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -89,14 +91,15 @@ class _RegisterState extends State<Register> {
                 ),
 
                 // field 3 : contact
-                StreamBuilder<String>(
+                StreamBuilder<Object>(
                     stream: bloc.registerMobile,
-                    builder: (context, AsyncSnapshot<String> snapshot) {
+                    builder: (context, snapshot) {
                       return TextField(
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                           hintText: 'Enter Mobile',
                           labelText: 'Mobile',
+                          errorText: snapshot.error?.toString(),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -109,15 +112,16 @@ class _RegisterState extends State<Register> {
                 ),
 
                 // field 5 : password
-                StreamBuilder<String>(
+                StreamBuilder<Object>(
                     stream: bloc.registerPassword,
-                    builder: (context, AsyncSnapshot<String> snapshot) {
+                    builder: (context, snapshot) {
                       return TextField(
                         keyboardType: TextInputType.emailAddress,
                         obscureText: true,
                         decoration: InputDecoration(
                           hintText: 'Enter Password',
                           labelText: 'Password',
+                          errorText: snapshot.error?.toString(),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -130,9 +134,9 @@ class _RegisterState extends State<Register> {
                 ),
 
                 // field 6 : Confirm password
-                StreamBuilder<String>(
+                StreamBuilder<Object>(
                     stream: bloc.registerCnfPassword,
-                    builder: (context, AsyncSnapshot<String> snapshot) {
+                    builder: (context, snapshot) {
                       return TextField(
                         keyboardType: TextInputType.emailAddress,
                         obscureText: isVisible ? true : false,
@@ -140,6 +144,7 @@ class _RegisterState extends State<Register> {
                         decoration: InputDecoration(
                           hintText: 'Enter Confirm Password',
                           labelText: 'Confirm Password',
+                          errorText: snapshot.error?.toString(),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -198,24 +203,30 @@ class _RegisterState extends State<Register> {
 
   // creating a method
   Widget _buildButton() {
-    return GestureDetector(
-      onTap: () {
-        // TODO : Login Here
-      },
-      child: Container(
-        height: 55,
-        width: 150,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: Colors.blueAccent,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Text(
-          'Sign Up',
-          style: TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
-        ),
-      ),
+    final bloc = Provider.of<RegisterBloc>(context, listen: false);
+    return StreamBuilder<Object>(
+      stream: bloc.isValid,
+      builder: (context, snapshot) {
+        return GestureDetector(
+          onTap: snapshot.hasError ? null : () {
+            // TODO : Login Here
+          },
+          child: Container(
+            height: 55,
+            width: 150,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: snapshot.hasError ? Colors.grey : Colors.blueAccent,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              'Sign Up',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
+            ),
+          ),
+        );
+      }
     );
   }
 }

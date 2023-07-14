@@ -42,14 +42,15 @@ class _LoginState extends State<Login> {
                   'Login',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
                 ),
-                StreamBuilder(
+                StreamBuilder<Object>(
                   stream: bloc.loginEmail,
-                  builder:(context, AsyncSnapshot<String> snapshot) => // used insted of child under streamBuilder
+                  builder:(context, snapshot) => // used insted of child under streamBuilder
                   TextField(
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
                       hintText: 'Enter Email',
                       labelText: 'Email',
+                      errorText: snapshot.error?.toString(),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -60,15 +61,16 @@ class _LoginState extends State<Login> {
                 const SizedBox(
                   height: 20,
                 ),
-                StreamBuilder<String>(
+                StreamBuilder<Object>(
                   stream: bloc.loginPassword,
-                  builder: (context, AsyncSnapshot<String> snapshot) {
+                  builder: (context, snapshot) {
                     return TextField(
                       keyboardType: TextInputType.emailAddress,
                       obscureText: true,
                       decoration: InputDecoration(
                         hintText: 'Enter Password',
                         labelText: 'Password',
+                        errorText: snapshot.error?.toString(),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -118,24 +120,30 @@ class _LoginState extends State<Login> {
 
   // creating a method
   Widget _buildButton() {
-    return GestureDetector(
-      onTap: () {
-        // TODO : Login Here
-      },
-      child: Container(
-        height: 55,
-        width: 150,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: Colors.blueAccent,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Text(
-          'Login',
-          style: TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
-        ),
-      ),
+    final bloc = Provider.of<LoginBloc>(context, listen: false);
+    return StreamBuilder<Object>(
+      stream: bloc.isValid,
+      builder: (context, snapshot) {
+        return GestureDetector(
+          onTap: snapshot.hasError ? null : () {
+            // TODO : Login Here
+          },
+          child: Container(
+            height: 55,
+            width: 150,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: snapshot.hasError ? Colors.grey : Colors.blueAccent,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              'Login',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
+            ),
+          ),
+        );
+      }
     );
   }
 }

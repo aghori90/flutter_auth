@@ -3,56 +3,61 @@ import 'package:abc/bloc/validators.dart';
 import 'package:rxdart/rxdart.dart';
 
 class RegisterBloc with Validators {
-  // controllers
-  final _registerName = BehaviorSubject<String>();
-  final _registerEmail = BehaviorSubject<String>();
-  final _registerMobile = BehaviorSubject<String>();
-  final _registerPassword = BehaviorSubject<String>();
-  final _registerCnfPassword = BehaviorSubject<String>();
+//controllers
+  final _name = BehaviorSubject<String>();
+  final _emailId = BehaviorSubject<String>();
+  final _phoneNumber = BehaviorSubject<String>();
+  final _password = BehaviorSubject<String>();
+  final _confirmPassword = BehaviorSubject<String>();
 
-  // getters
-  Stream<String> get registerName =>
-      _registerName.stream.transform(nameValidator);
-  Stream<String> get registerEmail =>
-      _registerEmail.stream.transform(emailValidator);
-  Stream<String> get registerMobile =>
-      _registerMobile.stream.transform(mobileValidator);
-  Stream<String> get registerPassword =>
-      _registerPassword.stream.transform(passwordValidator);
-  Stream<String> get registerCnfPassword =>
-      _registerCnfPassword.stream.transform(passwordValidator);
-  //for button
-  Stream<bool> get isValid => Rx.combineLatest5(
-      registerName,
-      registerEmail,
-      registerMobile,
-      registerPassword,
-      registerCnfPassword,
-      (a, b, c, d, e) => true);
+//Getters
+  Stream<String> get name => _name.stream.transform(nameValidator);
+  Stream<String> get emailId => _emailId.stream.transform(emailValidator);
+  Stream<String> get phoneNumber => _phoneNumber.stream.transform(phoneValidator);
+  Stream<String> get password => _password.stream.transform(passwordValidator);
+  Stream<String> get confirmPassword => _confirmPassword.stream.transform(confirmPasswordValidator);
 
-  // for password match
-  Stream<bool> get passMatch => Rx.combineLatest2(registerPassword, registerCnfPassword, (a, b) {
-    if(a != b){
-      return false;
-    }else{
-      return true;
+  Stream<bool> get isValid => Rx.combineLatest5(name, emailId, phoneNumber,
+      password, confirmPassword, (name, email, phone, pass, confPass) => true);
+
+  //`To match the password`
+  Stream<bool> get passwordMatch =>
+      Rx.combineLatest2(password, confirmPassword, (pass, confPass) {
+        if (pass != confPass) {
+          return false;
+        } else {
+          return true;
+        }
+      });
+
+//Setters
+  Function(String) get changeName => _name.sink.add;
+  Function(String) get changeEmailId => _emailId.sink.add;
+  Function(String) get changePhoneNumber => _phoneNumber.sink.add;
+  Function(String) get changePassword => _password.sink.add;
+  Function(String) get changeConfirmPassword => _confirmPassword.sink.add;
+
+//Submit
+  void submit() {
+    if (password != confirmPassword) {
+      _confirmPassword.sink.addError("Password doesn't match");
+    } else {
+      //TODO: CALL API
+
+      print(_name);
+      print(_emailId);
+      print(_phoneNumber);
+      print(_password);
+      print(_confirmPassword);
     }
-  });
+  }
 
-  // setters for listen form papge
-  Function(String) get changeRegisterName => _registerName.sink.add;
-  Function(String) get changeRegisterEmail => _registerEmail.sink.add;
-  Function(String) get changeRegisterMobile => _registerMobile.sink.add;
-  Function(String) get changeRegisterPassword => _registerPassword.sink.add;
-  Function(String) get changeRegisterCnfPassword =>
-      _registerCnfPassword.sink.add;
-
-  //  controller dispose
+//dispose
   void dispose() {
-    _registerName.close();
-    _registerEmail.close();
-    _registerMobile.close();
-    _registerPassword.close();
-    _registerCnfPassword.close();
+    _name.close();
+    _emailId.close();
+    _phoneNumber.close();
+    _password.close();
+    _confirmPassword.close();
   }
 }

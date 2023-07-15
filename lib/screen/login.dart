@@ -5,110 +5,92 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class Login extends StatefulWidget {
-  const Login({super.key});
-
   @override
-  State<Login> createState() => _LoginState();
+  _LoginState createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
-  // global key for form value
-  // assign it to the form 1
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  // var provider;  // created for object
   @override
   Widget build(BuildContext context) {
-    // calling the bloc (as object)
     final bloc = Provider.of<LoginBloc>(context, listen: false);
+
     return Scaffold(
-      backgroundColor: Colors.grey[200],
       body: Form(
-        // at last wrap with form widget
-        key: _formKey, // form GlobalKey 1
+        key: _formKey,
         child: Container(
-          // alignment: Alignment.center,
+          color: Colors.grey[200],
+          alignment: Alignment.center,
           padding: EdgeInsets.symmetric(horizontal: 20),
           child: SingleChildScrollView(
-            // widget to prevent overflow (imp)
             child: Column(
-              // mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(
-                  height: 120,
-                ),
-                Icon(Icons.lock),
                 Text(
-                  'Login',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
-                ),
-                StreamBuilder<Object>(
-                  stream: bloc.loginEmail,
-                  builder:(context, snapshot) => // used insted of child under streamBuilder
-                  TextField(
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      hintText: 'Enter Email',
-                      labelText: 'Email',
-                      errorText: snapshot.error?.toString(),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    onChanged: (value) => bloc.changeLoginEmail, // sending the value to setters(login_block.dart)
+                  "Login",
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                StreamBuilder<Object>(
-                  stream: bloc.loginPassword,
+                SizedBox(height: 30),
+                StreamBuilder<String>(
+                  stream: bloc.loginEmail,
                   builder: (context, snapshot) {
                     return TextField(
                       keyboardType: TextInputType.emailAddress,
-                      obscureText: true,
                       decoration: InputDecoration(
-                        hintText: 'Enter Password',
-                        labelText: 'Password',
                         errorText: snapshot.error?.toString(),
+                        hintText: "Enter email",
+                        labelText: "Email",
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
                       ),
-                      onChanged: (value) =>bloc.changeLoginPassword,
+                      onChanged: bloc.changeloginEmail,
                     );
-                  }
+                  },
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                // button <creating a method>
+                SizedBox(height: 30),
+                StreamBuilder<String>(
+                    stream: bloc.loginPassword,
+                    builder: (context, snapshot) {
+                      return TextField(
+                        keyboardType: TextInputType.visiblePassword,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          hintText: "Enter password",
+                          labelText: "Password",
+                          errorText: snapshot.error?.toString(),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        onChanged: bloc.changeLoginPassword,
+                      );
+                    }),
+                SizedBox(height: 30),
                 _buildButton(),
-                const SizedBox(
-                  height: 20,
-                ),
+                SizedBox(height: 30),
                 RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                          text: 'Do you Need an Account?',
-                          style: TextStyle(color: Colors.black)),
-                      WidgetSpan(
-                          child: SizedBox(
-                        width: 5,
-                      )),
-                      TextSpan(
-                          text: 'Register here',
-                          style: TextStyle(color: Colors.blueAccent),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              // routing internal with link
-                              Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                      builder: (context) => Register()));
-                            }),
-                    ],
-                  ),
+                  text: TextSpan(children: [
+                    TextSpan(
+                      text: "Need an account?",
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    WidgetSpan(child: SizedBox(width: 5)),
+                    TextSpan(
+                        text: "Register here",
+                        style: TextStyle(color: Colors.blue),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Navigator.of(context)
+                                .pushReplacement(MaterialPageRoute(
+                              builder: (context) => Register(),
+                            ));
+                          })
+                  ]),
                 ),
               ],
             ),
@@ -118,32 +100,37 @@ class _LoginState extends State<Login> {
     );
   }
 
-  // creating a method
   Widget _buildButton() {
     final bloc = Provider.of<LoginBloc>(context, listen: false);
+
     return StreamBuilder<Object>(
-      stream: bloc.isValid,
-      builder: (context, snapshot) {
-        return GestureDetector(
-          onTap: snapshot.hasError ? null : () {
-            // TODO : Login Here
-          },
-          child: Container(
-            height: 55,
-            width: 150,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: snapshot.hasError ? Colors.grey : Colors.blueAccent,
-              borderRadius: BorderRadius.circular(10),
+        stream: bloc.isValid,
+        builder: (context, snapshot) {
+          return GestureDetector(
+            onTap: snapshot.hasError || !snapshot.hasData
+                ? null
+                : () {
+              bloc.submit();
+            },
+            child: Container(
+              height: 40,
+              width: 120,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: snapshot.hasError || !snapshot.hasData
+                    ? Colors.grey
+                    : Colors.blueAccent,
+              ),
+              child: Text(
+                "Login",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 23,
+                ),
+              ),
             ),
-            child: Text(
-              'Login',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
-            ),
-          ),
-        );
-      }
-    );
+          );
+        });
   }
 }
